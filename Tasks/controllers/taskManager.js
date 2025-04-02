@@ -1,5 +1,6 @@
 const { errorHandler } = require("../errorHandler/error");
 const { Task, UserTask, TaskComment } = require("../models/taskManager");
+const axios = require("axios");
 
 // ADD NEW TASK
 const createTask = (req, res) =>
@@ -68,7 +69,16 @@ const getUserTasks = (req, res) =>
 const assignTaskToUser = (req, res) =>
   errorHandler(async () => {
     const { user, task } = req.body;
-    const assign = new UserTask({user, task });
+    await axios.get('http://auth:5000/api/v1/users/'+user, {
+      headers: {
+        Authorization: 'Bearer '+req.user.token
+      }
+    })
+    const taskExist = await Task.findById(task);
+    if(!taskExist) {
+      throw new Error('Task not found');
+    }
+    const assign = new UserTask({ user, task });
     await assign.save();
     res.status(200).json(assign);
   })(req, res);

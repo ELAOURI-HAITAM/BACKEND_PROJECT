@@ -9,17 +9,11 @@ const createChat = (req, res)=> errorHandler(async ()=> {
   const sender = req.user.id;
   const sender_name = req.user.username
   const token = req.user.token;
-  console.log("token : ",token);
-  
- const project = await axios.get('http://projects:4000/api/v1/project/find/'+room,{
+  await axios.get('http://projects:4000/api/v1/project/find/'+room,{
   headers : {
     Authorization : token
   }
- });
-  if(!project.data)
-  {
-    return res.status(400).json({message : "project not found :("})
-  }
+  });
   
   const chat = new Chat({ room, sender , sender_name, message });
   await chat.save();

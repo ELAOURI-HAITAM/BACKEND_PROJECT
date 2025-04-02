@@ -12,7 +12,7 @@ const authMiddleware = (req, res, next) => {
         throw new Error("Invalid token");
       }
     });
-    req.user = token;
+    req.user = { token };
     next();
   } catch (error) {
     res.status(400).json({ message: error.message });

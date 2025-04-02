@@ -11,9 +11,9 @@ services:
     depends_on:
       - mongo
   
-  project:
+  projects:
     build: ./Project
-    container_name: project-service
+    container_name: projects-service
     ports:
       - "4000:4000"
     environment:
@@ -40,9 +40,10 @@ services:
     ports:
       - "6000:6000"
     environment:
-      - PORT=3000
+      - PORT=6000
       - DB_URI=mongodb://mongo:27017/chat
     depends_on:
+      - projects
       - mongo
   mongo:
     image: mongo

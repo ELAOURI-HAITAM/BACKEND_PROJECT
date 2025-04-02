@@ -8,7 +8,8 @@ const VerifyToken = (request, response, next) => {
   }
   try {
     const verify = jwt.verify(token.split(" ")[1], SECRET);
-    request.user = {...verify, token};
+    request.user = verify
+    request.user.token = token
     next();
   } catch (err) {
     response.status(500).json({ message: err.message });

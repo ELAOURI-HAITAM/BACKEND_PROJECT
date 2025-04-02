@@ -1,6 +1,7 @@
 const Chat = require('../models/chatModel');
 const { errorHandler } = require('../errorHandler/error');
 const axios = require("axios");
+const { response } = require('express');
 
 // TO SEND MESSAGES 
 const createChat = (req, res)=> errorHandler(async ()=> {
@@ -8,11 +9,18 @@ const createChat = (req, res)=> errorHandler(async ()=> {
   const sender = req.user.id;
   const sender_name = req.user.username
   const token = req.user.token;
-  await axios.get('http://localhost:4000/api/v1/project/find/'+room, {
-    headers: {
-      'Authorization': 'Bearer '+token
-    }
-  });
+  console.log("token : ",token);
+  
+ const project = await axios.get('http://projects:4000/api/v1/project/find/'+room,{
+  headers : {
+    Authorization : token
+  }
+ });
+  if(!project.data)
+  {
+    return res.status(400).json({message : "project not found :("})
+  }
+  
   const chat = new Chat({ room, sender , sender_name, message });
   await chat.save();
   const messages = await Chat.find({ room } , {sender_name : 1 , message : 1  , room : 1});
